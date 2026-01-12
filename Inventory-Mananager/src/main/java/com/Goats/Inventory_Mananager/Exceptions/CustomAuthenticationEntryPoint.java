@@ -1,0 +1,42 @@
+package com.Goats.Inventory_Mananager.Exceptions;
+
+import com.Goats.Inventory_Mananager.dtos.Response;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.stereotype.Component;
+import tools.jackson.databind.ObjectMapper;
+
+import javax.naming.AuthenticationException;
+import java.io.IOException;
+
+@Component
+@AllArgsConstructor
+public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
+
+    private final ObjectMapper objectMapper;
+
+    @Override
+    public void commence(HttpServletRequest request, HttpServletResponse response, org.springframework.security.core.AuthenticationException authException) throws IOException, ServletException {
+        Response errorResponse = Response.builder()
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .message(authException.getMessage())
+                .build();
+
+        response.setContentType("application/json");
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+
+        //Response r = Response.builder().status(200).message("OK").build();
+
+
+
+
+    }
+}
